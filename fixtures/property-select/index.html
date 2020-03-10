@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Propery Selector</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script id="sap-ui-bootstrap" type="text/javascript"
+        src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js" data-sap-ui-theme="sap_belize"
+        data-sap-ui-libs="sap.m"></script>
+    <script>
+        sap.ui.require(["sap/m/Button", "sap/m/Dialog"],function(Button, Dialog) {
+            var button = new Button({
+                text: "Test",
+                press: () => {
+                    new Dialog({
+                        title: "Test"
+                    }).open()
+                }
+            })
+            button.placeAt("content");
+        })
+    </script>
+</head>
+
+<body class='sapUiBody'>
+    <div id='content'></div>
+</body>
+
+</html>

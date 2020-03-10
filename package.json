@@ -1,0 +1,43 @@
+{
+  "name": "playwright-ui5",
+  "version": "1.0.0",
+  "description": "OpenUI5 playwright custom selector",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 99999 -r ts-node/register src/**/*.spec.ts",
+    "test-debug": "mocha -r ts-node/register src/**/*.spec.ts --debug-brk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashwinmenkudle/playwright-ui5.git"
+  },
+  "keywords": [
+    "playwright",
+    "openui5",
+    "ui5",
+    "selector",
+    "test",
+    "automation",
+    "e2e"
+  ],
+  "author": "Ashwin Menkudle",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ashwinmenkudle/playwright-ui5/issues"
+  },
+  "homepage": "https://github.com/ashwinmenkudle/playwright-ui5#readme",
+  "dependencies": {
+    "playwright": "^0.11.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.10",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.9.0",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.0",
+    "node-static": "^0.7.11",
+    "pegjs": "^0.10.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  }
+}
