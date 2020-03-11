@@ -1,6 +1,21 @@
 import { selectors, Page } from "playwright"
 import { parse } from "./parser";
 
+declare global {
+    const sap: any
+    const jQuery: any
+}
+
+declare interface CompProperty {
+    name: string,
+    value: string
+}
+
+declare interface Selection {
+    compName: string
+    props: Array<CompProperty>
+}
+
 // Register the engine. Selectors will be prefixed with "tag=".
 export async function register() {
     const engineString = `
@@ -27,36 +42,54 @@ export async function register() {
     await selectors.register(selectorEngine, { name: 'tag' });
 }
 
-export async function click(page: Page) {
-    let string = "demo"
-
-    const regex = /([a-zA-Z\.]+)(?:\[([a-zA-Z0-9]+)\=\"(.+)\"\]?)*/gm;
-    const selector = `sap.m.Button[text123="test"]`;
-    let m;
-// ([a-zA-Z\.]+)(\[([a-zA-Z0-9]+)\=\"([^\"]+)\"\])*
-    while ((m = regex.exec(selector)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (m.index === regex.lastIndex) {
-            regex.lastIndex++;
-        }
-
-        // The result can be accessed through the `m`-variable.
-        m.forEach((match, groupIndex) => {
-            console.log(`Found match, group ${groupIndex}: ${match}`);
+function selectionHandler(selection: Selection): Promise<Element> {
+    return new Promise<Element>((resolve, reject) => {
+        sap.ui.require(["sap/base/util/ObjectPath"], function (ObjectPath) {
+            // debugger
+            jQuery("[data-sap-ui]").each(function () {
+                if (!!this.id) {
+                    let control = sap.ui.getCore().byId(this.id);
+                    if (control instanceof ObjectPath.get(selection.compName)) {
+                        if (!!selection.props && selection.props.length == 0) {
+                            resolve(this);
+                            return false;
+                        }
+                        var propsMatch = true;
+                        for (var i = 0; i < selection.props.length; i++) {
+                            var value = control.getProperty(selection.props[0].name);
+                            if (String(value) !== String(selection.props[0].value)) {
+                                propsMatch = false;
+                            }
+                        }
+                        if (propsMatch) {
+                            resolve(this);
+                            return false;
+                        }
+                    }
+                }
+            });
         });
+
+    });
+}
+
+export async function click(page: Page, selector: string) {
+    try {
+        var selection: Selection = parse(selector, {})
+        let control = await page.evaluateHandle(selectionHandler, selection);
+        await control.click()
+    } catch (error) {
+        console.error("UI5 selector syntax is incorrect : " + error)
     }
+}
 
-    let control = await page.evaluateHandle((selector) => {
-        let p = new Promise<Element>((resolve, reject) => {
-            if (!!jQuery("[data-sap-ui]").get(0)) {
-                resolve(jQuery("[data-sap-ui]").get(0));
-                debugger
-                console.log(string);
-            }
-            reject()
-        });
-        return p
-    }, "sap.m.Button[text='test']");
-    await control.click()
+export async function isPresent(page: Page, selector: string) {
+    try {
+        var selection: Selection = parse(selector, {})
+        let control = await page.evaluateHandle(selectionHandler, selection);
+        return !!control;
+    } catch (error) {
+        console.error("UI5 selector syntax is incorrect : " + error)
+    }
 }
 

@@ -2,11 +2,8 @@ import { chromium } from "playwright";
 import { expect } from "chai"
 import { Server } from 'node-static';
 import * as http from "http"
-import { register, click } from ".";
+import { register, click, isPresent } from ".";
 
-declare global {
-    const jQuery: any
-}
 
 describe('First test', () => {
     let server: http.Server
@@ -26,24 +23,10 @@ describe('First test', () => {
         const page = await context.newPage();
         await page.goto('http://localhost:8080/property-select/index.html');
 
-        // Use the selector prefixed with its name.
-        // let button = await page.evaluateHandle(() => {
-        //     let p = new Promise<Element>((resolve, reject) => {
-        //         if (!!jQuery("[data-sap-ui]").get(0)) {
-        //             resolve(jQuery("[data-sap-ui]").get(0));
-        //             // debugger
-        //         }
-        //         reject()
-        //     });
-        //     return p
-        // });
-        // let button = await page.$('tag=button');
-        // await button.click()
-        
-        click(page)
+        await click(page, 'sap.m.Button[text="Test"]')
+        await isPresent(page, 'sap.m.Dialog[title="Test"]')
 
         let button = await page.$('tag=button');
-        // const button = await page.$('.sapMBtn');
         expect(button).to.be.a("object")
 
         browser.close()
