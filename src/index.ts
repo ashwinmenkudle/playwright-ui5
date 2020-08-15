@@ -39,7 +39,7 @@ export async function register() {
         }
     }`
     const selectorEngine = new Function("options", engineString)
-    await selectors.register(selectorEngine, { name: 'tag' });
+    await selectors.register('tag', selectorEngine);
 }
 
 function selectionHandler(selection: Selection): Promise<Element> {
