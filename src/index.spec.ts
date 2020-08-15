@@ -2,9 +2,9 @@ import { chromium, ChromiumBrowser, Page } from "playwright";
 import { expect } from "chai"
 import { Server } from 'node-static';
 import * as http from "http"
-import { register, click, isPresent } from ".";
+import { register, waitForUI5Ready } from ".";
 
-
+// jest.setTimeout(150000)
 describe('Select UI5 component by property', () => {
     let server: http.Server
     let page: Page
@@ -21,7 +21,7 @@ describe('Select UI5 component by property', () => {
       });
 
     beforeEach(async () => {
-        // const browser = await chromium.launch({ headless: false, devtools: true })
+        // browser = await chromium.launch({ headless: false, devtools: true })
         browser = await chromium.launch()
         let context = await browser.newContext()
         page = await context.newPage();
@@ -29,22 +29,24 @@ describe('Select UI5 component by property', () => {
 
     test('select by one propery', async () => {
         await page.goto('http://localhost:8080/property-select/index.html');
-
-        await click(page, 'sap.m.Button[text="Test"]')
-        await isPresent(page, 'sap.m.Dialog[title="Test"]')
-
-        let button = await page.$('tag=button');
+        await waitForUI5Ready(page)
+        let button = await page.$('ui5=sap.m.Button[text="Test"]')
         expect(button).to.be.a("object")
+
+        await page.click('ui5=sap.m.Button[text="Test"]')
+
+        let dialog = await page.$('ui5=sap.m.Dialog[title="Test"]')
+        expect(dialog).to.be.a("object")
+        let buttons = await page.$$('ui5=sap.m.Button');
+        expect(buttons).length(1)
     });
 
     test('select by component', async () => {
         await page.goto('http://localhost:8080/property-select/index.html');
-
-        await click(page, 'sap.m.Button')
-        await isPresent(page, 'sap.m.Dialog[title="Test"]')
-
-        let button = await page.$('tag=button');
-        expect(button).to.be.a("object")
+        await waitForUI5Ready(page)
+        await page.click('ui5=sap.m.Button')
+        let dialog = await page.$('ui5=sap.m.Dialog[title="Test"]')
+        expect(dialog).to.be.a("object")
     });
     
     afterEach(async () => {

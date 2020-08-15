@@ -4,7 +4,7 @@
   "description": "OpenUI5 playwright custom selector",
   "main": "index.js",
   "scripts": {
-    "gen-parser": "pegjs --format commonjs src/selector.pegjs",
+    "gen-parser": "pegjs --format globals --export-var ui5 src/selector.pegjs",
     "test": "jest",
     "test-debug": "jest src/**/*.spec.ts --debug-brk"
   },
