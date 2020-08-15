@@ -16,7 +16,7 @@ describe('First test', () => {
         }).listen(8080);
     })
 
-    it('should return true', async () => {
+    test('should return true', async () => {
         await register()
         // const browser = await chromium.launch({ headless: false, devtools: true })
         const browser = await chromium.launch()
@@ -33,9 +33,12 @@ describe('First test', () => {
         browser.close()
     });
 
-    afterEach(() => {
-        server.close(() => {
-            console.log('We closed!');
+    afterEach(async () => {
+        return new Promise((resolve)=>{
+            server.close(() => {
+                console.log('We closed!');
+                resolve()
+            })
         })
     })
 });
