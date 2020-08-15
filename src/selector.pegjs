@@ -13,7 +13,7 @@
 }
 
 start
-  = name:ComponentName props:Properties { return {compName: name, props:props}}
+  = name:ComponentName props:(Properties)? { return {compName: name, props: !props ? [] : props}}
  
 ComponentName "string"
   = componentName:[a-zA-Z.]+ { return concat(componentName) }
@@ -25,7 +25,7 @@ Property
   = _ name:PropertyName _ [\=] _ [\"] value:PropertyValue [\"] _ {return {name: name, value: value}}
   
 PropertyValue "string"
-  = propVal:[^\"]+ { return concat(propVal) }
+  = propVal:[^\"]* { return concat(propVal) }
 
 PropertyName "string"
   = propName:[a-zA-Z0-9]+ { return concat(propName) }

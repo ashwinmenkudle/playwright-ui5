@@ -1,16 +1,38 @@
 import { parse, SyntaxError} from "./parser"
 import { expect } from "chai"
 
-// interface Error {
-//     message:string
-// }
-
 describe('Parse UI5 selector', () => {
+    it("no property", () => {
+        let test = parse(`sap.m.Button`, {})
+        expect({
+            compName: "sap.m.Button", props: []
+        }).to.deep.equal(test)
+    })
+
     it("one property", () => {
         let test = parse(`sap.m.Button[text123="test"]`, {})
         expect({
             compName: "sap.m.Button", props: [{
                 name: "text123", value: "test"
+            }]
+        }).to.deep.equal(test)
+    })
+    it("empty property value", () => {
+        let test = parse(`sap.m.Button[icon=""]`, {})
+        expect({
+            compName: "sap.m.Button", props: [{
+                name: "icon", value: ""
+            }]
+        }).to.deep.equal(test)
+    })
+
+    it("two property", () => {
+        let test = parse(`sap.m.Button[text123="test", icon="demo.demo"]`, {})
+        expect({
+            compName: "sap.m.Button", props: [{
+                name: "text123", value: "test"
+            }, {
+                name: "icon", value: "demo.demo"
             }]
         }).to.deep.equal(test)
     })
@@ -39,7 +61,7 @@ describe('Parse UI5 selector', () => {
             parse(`sap.m.Button[text123= "test" test = "test"]`, {})
         } catch (error) {
             expect(error).instanceOf(SyntaxError)
-            expect(error.message).to.be.equal('Expected [,] or [\\]] but "t" found.');
+            expect(error.message).to.be.equal("Expected [,] or [\\]] but \"t\" found.");
         }
     })
 })
